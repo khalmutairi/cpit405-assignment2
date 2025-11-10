@@ -1,53 +1,53 @@
-const searchButton = document.getElementById('searchButton');
-const searchInput = document.getElementById('searchInput');
+// 1. نحدد العناصر
+const fetchButton = document.getElementById('fetchButton');
 const resultsContainer = document.getElementById('resultsContainer');
 
-searchButton.addEventListener('click', searchUniversities);
+// 2. نربط الزر بالدالة
+fetchButton.addEventListener('click', fetchUser);
 
-async function searchUniversities() {
-    const query = searchInput.value;
-
-    if (query.trim() === "") {
-        resultsContainer.innerHTML = '<p>Please enter a name to search first.</p>';
-        return;
-    }
-
-    resultsContainer.innerHTML = '<p>...Searching</p>';
-
-    const apiUrl = `https://universities.hipolabs.com/search?name=${query}`;
+// 3. دالة جلب البيانات (Fetch)
+async function fetchUser() {
+    // رسالة الانتظار
+    resultsContainer.innerHTML = '<p>...Fetching user</p>';
+    
+    // هذا الـ API الجديد والمضمون (لاحظ https)
+    const apiUrl = 'https://randomuser.me/api/';
 
     try {
         const response = await fetch(apiUrl);
         const data = await response.json();
         
-        displayResults(data);
+        // الـ API هذا يرجع النتائج في مصفوفة اسمها results
+        displayUser(data.results[0]);
 
     } catch (error) {
-        resultsContainer.innerHTML = `<p>An error occurred while fetching data: ${error.message}</p>`;
+        resultsContainer.innerHTML = `<p>An error occurred: ${error.message}</p>`;
     }
 }
 
-function displayResults(universities) {
+// 4. دالة عرض البيانات
+function displayUser(user) {
+    // ننظف الحاوية
     resultsContainer.innerHTML = '';
 
-    if (universities.length === 0) {
-        resultsContainer.innerHTML = '<p>No matching results found.</p>';
-        return;
-    }
+    // نجهز البيانات
+    const name = `${user.name.title} ${user.name.first} ${user.name.last}`;
+    const email = user.email;
+    const phone = user.phone;
+    const location = `${user.location.city}, ${user.location.country}`;
+    const picture = user.picture.large; // صورة كبيرة
 
-    const ul = document.createElement('ul');
-
-    universities.forEach(uni => {
-        const li = document.createElement('li');
-        
-        const website = uni.web_pages[0] 
-            ? `<a href="${uni.web_pages[0]}" target="_blank">Visit Website</a>` 
-            : 'No website available';
-        
-        li.innerHTML = `<strong>${uni.name}</strong> (Country: ${uni.country}) - ${website}`;
-        
-        ul.appendChild(li);
-    });
-
-    resultsContainer.appendChild(ul);
+    // نركب الكود (HTML) اللي بنعرضه
+    const userCard = `
+        <div class="user-card">
+            <img src="${picture}" alt="Profile photo of ${name}">
+            <h2>${name}</h2>
+            <p><strong>Email:</strong> ${email}</p>
+            <p><strong>Phone:</strong> ${phone}</p>
+            <p><strong>Location:</strong> ${location}</p>
+        </div>
+    `;
+    
+    // نحط الكود في الصفحة
+    resultsContainer.innerHTML = userCard;
 }
