@@ -14,7 +14,7 @@ async function searchUniversities() {
 
     resultsContainer.innerHTML = '<p>...Searching</p>';
 
-    const apiUrl = `http://universities.hipolabs.com/search?name=${query}`;
+    const apiUrl = `https://universities.hipolabs.com/search?name=${query}`;
 
     try {
         const response = await fetch(apiUrl);
